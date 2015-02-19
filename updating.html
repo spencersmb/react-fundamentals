@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Updating</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="http://fb.me/react-0.12.2.min.js"></script>
+    <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+
+</head>
+<body>
+
+<div id="panel"></div>
+
+<script type="text/jsx">
+    /***@jsx React.DOM */
+
+    var APP = React.createClass({
+      getInitialState: function () {
+        return{
+          increasing:false
+        }
+      },
+
+      update: function(){
+          //initial val is set at the bottom in APP using val={0}
+          var newVal = this.props.val+1;
+          this.setProps({val:newVal})
+      },
+
+      componentWillReceiveProps: function (nextProps) {
+        //on initial load increasing is false
+        //if its greater than the current state increasing will always be true
+        this.setState({increasing: nextProps.val>this.props.val});
+      },
+
+      //this is expecting a true or false - wont render if false
+      shouldComponentUpdate: function (nextProps, nextState) {
+        return nextProps.val % 5 ===0;
+      },
+      //updates after should update fires true
+      componentWillUpdate: function (nextProps, nextState) {
+        console.log('nextProps');
+      },
+
+      //looks at the item before the update
+      componentDidUpdate: function (prevProps, prevState) {
+        console.log("prev ===" + JSON.stringify(prevProps));
+      },
+
+      render: function() {
+        console.log(this.state.increasing);
+        return (
+                /* on click add one each time then multiply by 2 each time */
+                <button
+                  onClick={this.update}>
+                  {this.props.val}
+                </button>
+                );
+      }
+    });
+
+
+      React.renderComponent(
+              <APP val={0} />, document.getElementById('panel')
+      )
+
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Mixins - transfer functions to multiple components at one time</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="http://fb.me/react-0.12.2.min.js"></script>
+    <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+
+</head>
+<body>
+
+<div id="panel"></div>
+
+<script type="text/jsx">
+    /***@jsx React.DOM */
+    var ReactMixin = {
+      componentWillMount: function () {
+        console.log('will mount');
+
+      },
+      getInitialState: function () {
+        return{count:0}
+      },
+      incrementCount: function () {
+        this.setState({count: this.state.count+1});
+      }
+    };
+
+
+
+
+    var APP = React.createClass({
+
+      render: function() {
+
+        return (
+
+               <div>
+                       <ButtonComponent txt="This is the button" />
+                       <InputComponent txt="This is the input" />
+               </div>
+                );
+      }
+    });
+
+    var ButtonComponent = React.createClass({
+      //Here we use the mixin and manually fire it with an onclick
+      mixins:[ReactMixin],
+      render: function() {
+        return (
+          <button onClick={this.incrementCount}> {this.props.txt} - {this.state.count}</button>
+        );
+      }
+    });
+    
+    var InputComponent = React.createClass({
+      //Here we use the same mixin functionality but we use the componentWill mount to set an interval that uses this.incrementcount instead of the onclick like above.
+      mixins:[ReactMixin],
+      componentWillMount: function () {
+        setInterval(this.incrementCount, 1000)
+      },
+      render: function() {
+        return (
+          <input value={this.props.txt + ' - ' + this.state.count} />
+        );
+      }
+    });
+
+
+      React.renderComponent(
+              <APP />, document.getElementById('panel')
+      )
+
+
+
+
+</script>
+
+</body>
+</html>

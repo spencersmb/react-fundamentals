@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>First Component</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="http://fb.me/react-0.12.2.min.js"></script>
+    <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+
+</head>
+<body>
+
+<script type="text/jsx">
+    /***@jsx React.DOM */
+
+    var APP = React.createClass({
+        getInitialState:function(){
+          return{
+              red:128,
+              blue:128,
+              green:128,
+              txt: 'Default State text',
+              id:0
+          }
+        },
+
+        getDefaultProps: function(){
+
+            //setting default properties
+          return{
+              txt:'Default txt',
+              cat:0
+          }
+        },
+        //define type of properties we are expecting
+        propTypes:{
+            txt:React.PropTypes.string ,
+            cat:React.PropTypes.number.isRequired
+        },
+        updateTxt: function (e) {
+          this.setState({
+              txt: e.target.value
+          });
+        },
+        //use refs to target the name and the reach into the dom and get that value
+        updateColor: function (e) {
+            this.setState({
+                red:this.refs.red.getDOMNode().value,
+                green:this.refs.green.getDOMNode().value,
+                blue:this.refs.blue.getDOMNode().value
+            });
+        },
+
+        //render method
+        render:function(){
+            return(
+                    <div>
+                        <Widget txt={this.state.txt} update={this.updateTxt} />
+
+                        <h1>{this.state.red}</h1>
+                        <Slider ref="red" refresh={this.updateColor} />
+                        <h1>{this.state.blue}</h1>
+                        <Slider ref="blue" refresh={this.updateColor} />
+                        <h1>{this.state.green}</h1>
+                        <Slider ref="green" refresh={this.updateColor} />
+
+                        {/*Get the nested children from inner components*/}
+                        <BButton href="/" className="btn btn-primary" >I <BHeart className="glyphicon-heart" /> React
+                        </BButton>
+
+                        <BButton href="#" className="btn btn-success" >I <BHeart className="glyphicon-pencil" /> React
+                        </BButton>
+
+
+                    </div>
+            );
+        }
+    });
+
+    var BButton = React.createClass({
+      render: function() {
+        return (
+        /*This gets the text from BButton using children*/
+        /*Also use transferpropsTo and allows us to add properties in the component above this helps make reusable components*/
+         this.transferPropsTo(<a className="btn" >{this.props.children}</a>)
+        );
+      }
+    });
+
+    var BHeart = React.createClass({
+      render: function() {
+        return (
+            this.transferPropsTo(<span className="glyphicon"></span>)
+        );
+      }
+    });
+
+    //h1 gets text from widget state.txt on change update the state with new content
+    var Widget = React.createClass({
+      render: function() {
+        return (
+          <div>
+              <input type="text" onChange={this.props.update}/>
+              <h1>{this.props.txt}</h1>
+          </div>
+        );
+      }
+    });
+
+    var Slider = React.createClass({
+        render: function() {
+            return (
+                        <input type="range" min="0" max="255" onChange={this.props.refresh}/>
+
+            );
+        }
+    });
+
+    React.renderComponent(<APP />, document.body)
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Making Component more flexible</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <script src="http://fb.me/react-0.12.2.min.js"></script>
+  <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+
+</head>
+<body>
+
+<script type="text/jsx">
+  /***@jsx React.DOM */
+
+  var APP = React.createClass({
+    getInitialState:function(){
+      return{
+        red:128
+//        blue:128,
+//        green:128,
+//        txt: 'Default State text',
+//        id:0
+      }
+    },
+
+    //use refs to target the name and the reach into the dom and get that value
+    updateColor: function (e) {
+      this.setState({
+        //must use refs.range
+        red: this.refs.red.refs.range.getDOMNode().value
+      });
+    },
+
+    //render method
+    render:function(){
+      return(
+              <div>
+
+
+                <NumInput
+                        ref="red"
+                        min={0}
+                        max={255}
+                        step={0.01}
+                        val={this.state.red}
+                        refresh={this.updateColor}
+                        label="Red"
+                        type="Range"
+                />
+
+
+
+
+              </div>
+      );
+    }
+  });
+
+  //CREATE AN API
+  var NumInput = React.createClass({
+    //STEP 1 CREATE propTypes:
+    propTypes: {
+      min: React.PropTypes.number,
+      max: React.PropTypes.number,
+      step: React.PropTypes.number,
+      val: React.PropTypes.number,
+      label: React.PropTypes.string,
+      update: React.PropTypes.func.isRequired,
+      //pass in wether we want it to be a range or number
+      type: React.PropTypes.oneOf(['number','range'])
+    },
+    //Step 2: Setup Default Properties
+    getDefaultProps: function () {
+      return{
+        min:null,
+        max:null,
+        val:0,
+        step:1,
+        label:'',
+        type:'range'
+      }
+
+    },
+
+    render: function() {
+      //if label == true then place <label> otherwise place empty string
+      var label = this.props.label !=='' ?
+              <label>{this.props.label} : {this.props.val}</label> : ''
+      return (
+              <div>
+                <input ref="range"
+                        type={this.props.type}
+                        min={this.props.min}
+                        max={this.props.max}
+                        step={this.props.step}
+                        defaultValue={this.props.val}
+                        onChange={this.props.refresh} />
+                      {label}
+              </div>
+
+      );
+    }
+  });
+
+  React.renderComponent(<APP />, document.body)
+
+</script>
+
+</body>
+</html>
